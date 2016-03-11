@@ -19,10 +19,6 @@ import java.security.cert.X509Certificate;
 import java.security.cert.Certificate;
 
 public class Vscan {
-
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) throws Exception {
         // Begin C1 - The goal of this is to allow connection to some sites with invalid cert.
         //This is important when we want to test self signed certificates in Lab environment
