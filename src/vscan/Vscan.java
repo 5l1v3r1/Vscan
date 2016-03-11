@@ -20,6 +20,7 @@ import java.security.cert.Certificate;
 
 public class Vscan {
     public static void main(String[] args) throws Exception {
+            
         // Begin C1 - The goal of this is to allow connection to some sites with invalid cert.
         //This is important when we want to test self signed certificates in Lab environment
         TrustManager[] trustAllCerts = new TrustManager[] {
@@ -31,14 +32,7 @@ public class Vscan {
         public void checkServerTrusted(X509Certificate[] certs, String authType) {  } 
             }
         };
-        // We should loop through different versions of SSL / TLS: TLSv1.2, TLSv1.1, TLSv1, SSLv3
-        // Some details in https://blogs.oracle.com/java-platform-group/entry/diagnosing_tls_ssl_and_https
-        String protocol = "SSLv3";
-        java.lang.System.setProperty("https.protocols", protocol);
-        SSLContext sc = SSLContext.getInstance(protocol);
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        
+               
         // create trusted Host name verifier
         HostnameVerifier allHostsValid = new HostnameVerifier() {
             public boolean verify(String hostname, SSLSession session) {
@@ -47,7 +41,26 @@ public class Vscan {
         };
       HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);  
       
-    // End C1
+    //++++
+     // We should loop through different versions of SSL / TLS: TLSv1.2, TLSv1.1, TLSv1, SSLv3
+     // Some details in https://blogs.oracle.com/java-platform-group/entry/diagnosing_tls_ssl_and_https
+      ArrayList<String>sslTlsVersions  = new ArrayList<String>();
+        sslTlsVersions.add("SSLv3"); sslTlsVersions.add("TLSv1"); sslTlsVersions.add("TLSv1.1"); sslTlsVersions.add("TLSv1.2");
+        
+        //String protocol = "SSLv3";
+        for (String protocol: sslTlsVersions) {
+            System.out.println();
+            System.out.println("Testing with protocol "+ protocol);
+            System.out.println();
+        java.lang.System.setProperty("https.protocols", protocol);
+        SSLContext sc = SSLContext.getInstance(protocol);
+        sc.init(null, trustAllCerts, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());      
+    //++++
+
+
+
+// End C1
     // Begin Comment 2: This is to make sure we exit if the user does no provide an argument
     //the argument provided must be https link
     if (args.length == 0) {
@@ -121,6 +134,7 @@ public class Vscan {
         }
         
     }
+    }
     
     // start
     public String connectToUrlForCVE(String https_url) {
@@ -174,10 +188,12 @@ public class Vscan {
             print_https_cert(con);
             print_content(con);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.out.println("There is a problem with the provided URL");
+            //e.printStackTrace();
             
         }catch (IOException e){
-            e.printStackTrace();
+            System.out.println("We have a problem please check the provided URL");
+            //e.printStackTrace();
         }
     }
     
@@ -201,9 +217,11 @@ public class Vscan {
 
                 }
             } catch (SSLPeerUnverifiedException e) {
-                e.printStackTrace();
+                System.out.println("Connection fails. The protocol may not be supported 1");
+                //e.printStackTrace();
             } catch (IOException e) {
-                e.printStackTrace();
+                 System.out.println("Connection fails. The protocol may not be supported 2");
+                //e.printStackTrace();
             }
             
             // printing HTTP headers
@@ -237,5 +255,5 @@ public class Vscan {
             }
         }
     }
-    
+
 }
