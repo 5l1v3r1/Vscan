@@ -101,7 +101,7 @@ public class Vscan {
                    System.out.println("Number of cipher suites supported by the target:"+ listOfSuccessfulCiphers.size());
                    System.out.println("List of vulnerabilities and solution containing work around:");
                    
-                   // send the ArrayList containing the list of Successful Ciphers to the CheckWeakCiphers class for evaluation.
+                   // send the ArrayList containing the list of Successful Ciphers to the CheckWeakCiphers class for evaluation. a
                   CheckWeackCiphers.parseTargetCipher(listOfSuccessfulCiphers, protocol);
                    // test CBC Vulnerabilities; only check one cipher suite with "CBC"
                    Boolean cbctest = false;
