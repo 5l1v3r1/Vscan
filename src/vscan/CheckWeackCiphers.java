@@ -41,50 +41,43 @@ public class CheckWeackCiphers {
         listOfCiphersAndGrade.put("TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA", "C");
         Boolean cbctested = false;
         Boolean rc4tested = false;
+        
         for (String cipherSuite: listOfCiphersAndGrade.keySet()){
             if (supportedCipherList.contains(cipherSuite)){
             System.out.println(cipherSuite + " Grade " + listOfCiphersAndGrade.get(cipherSuite));
         }
-            
+        }
         
-        //if (cipherSuite.toLowerCase().contains("cbc") && (cbctested == false)){
+        for (String cipherSuite: supportedCipherList){
+                      
             if (cipherSuite.toLowerCase().contains("cbc") && (cbctested == false)){
             cbctested = true;
             vulnerabilityCodeList.add("cbc");
-            /*//Build a CBC CVEs to the list of CVEs.
-            // We should only add cbc to the arrayList, then check the database for all cbc related vulnerabilities
-            cveList.add("CVE-2012-2333");
-            cveList.add("CVE-2014-8730");
-            cveList.add("CVE-2011-3389");
-            cveList.add("CVE-2012-1870");
-            //System.out.println("you are vulnerable to some Weaknesses in CBC");
-            System.out.println(" CVE-2012-2333: CBC vul nerability. Not Vulnerable if running Big-IP version 11.3.0 +. See SOL15401");
-            System.out.println(" CVE-2014-8730: CBC vul nerability. Not Vulnerable if running Big-IP version 11.5.2 +. A Patch exist for all supported releases See SOL15882");
-            //System.out.println("Your Infrastructure is much safer if you are running the latest Big-IP software release"); */
-    }else{
-           if (cipherSuite.toLowerCase().contains("rc4") && (rc4tested == false)){  
-              rc4tested = true;
-              vulnerabilityCodeList.add("rc4");
-              /*System.out.println(" CVE-2013-2566: RC4 Vulnerability see F5 SOL16867");
-              System.out.println(" CVE-2015-2808: RC4 Vulnerability see F5 SOL14638");*/
-           }
-        }
-        }
-       //CheckVulnerabilities.parseCVE(cveList);
+            
+            }else{
+                   if (cipherSuite.toLowerCase().contains("rc4") && (rc4tested == false)){  
+                        rc4tested = true;
+                        vulnerabilityCodeList.add("rc4");
+                }            
+            }
+            
+            if (cipherSuite.toLowerCase().contains("cbc") && (testedProtocol.equalsIgnoreCase("TLSv1"))){
+                    if(!vulnerabilityCodeList.contains("cbc-tlsv1"))
+                    vulnerabilityCodeList.add("cbc-tlsv1");
+                }
+               }
         
+        System.out.println("List of codes: "+ vulnerabilityCodeList);
        try {
        ConnectDB conn = new ConnectDB();
        conn.connectToDB();
        //Call execSQL with the list of codes that will be checked before display
        conn.execSQL(vulnerabilityCodeList);
        } catch (Exception e) {
-				System.out.println("Cannot connect to the database.");
-       }
-
-       
-    }
-     else {
-    System.out.println("Empty list Protocol "+ testedProtocol+ " not supported.");
+	     System.out.println("Cannot connect to the database.");
+       }     
+    }else {
+    System.out.println("Protocol "+ testedProtocol+ " is not supported.");
 }
     }
 }
