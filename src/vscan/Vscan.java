@@ -40,43 +40,25 @@ public class Vscan {
             }
         };
       HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);  
-      
-    //++++
-     // We should loop through different versions of SSL / TLS: TLSv1.2, TLSv1.1, TLSv1, SSLv3
+      CheckCliArgs.parseArgs(args);
+       String targetUrl = args[0];
+       System.out.println("Target: " + targetUrl );
+     // We loop through different versions of SSL / TLS: TLSv1.2, TLSv1.1, TLSv1, SSLv3
      // Some details in https://blogs.oracle.com/java-platform-group/entry/diagnosing_tls_ssl_and_https
       ArrayList<String>sslTlsVersions  = new ArrayList<String>();
-        sslTlsVersions.add("SSLv3"); sslTlsVersions.add("TLSv1"); sslTlsVersions.add("TLSv1.1"); sslTlsVersions.add("TLSv1.2");
+      sslTlsVersions.add("SSLv3"); sslTlsVersions.add("TLSv1"); sslTlsVersions.add("TLSv1.1"); sslTlsVersions.add("TLSv1.2");
         
         //String protocol = "SSLv3";
         for (String protocol: sslTlsVersions) {
             System.out.println();
             System.out.println("Testing with protocol "+ protocol);
             System.out.println();
-        java.lang.System.setProperty("https.protocols", protocol);
-        SSLContext sc = SSLContext.getInstance(protocol);
-        sc.init(null, trustAllCerts, new java.security.SecureRandom());
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());      
-    //++++
+            java.lang.System.setProperty("https.protocols", protocol);
+            SSLContext sc = SSLContext.getInstance(protocol);
+            sc.init(null, trustAllCerts, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());      
+  
 
-
-
-// End C1
-    // Begin Comment 2: This is to make sure we exit if the user does no provide an argument
-    //the argument provided must be https link
-    if (args.length == 0) {
-            System.out.println("You must enter an https URL as argument");
-            System.exit(0);
-            } else {
-                String s = args[0];
-                if (!s.startsWith("https://")) {
-                    System.out.println("You must enter a valid https URL as argument");
-                    System.out.println("An example is: HttpsScan https://www.example.com");
-                    System.exit(0);   
-                } else {
-        //set the target URL as the first CLI argument    
-                     String targetUrl = args[0];
-                     System.out.println("Target: " + targetUrl );
-        // end comment 2
         // The list of cipher suites that will be used by th eclient to connect to the target repetitively
         // is defined below in an Array list. 
         SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
@@ -87,9 +69,7 @@ public class Vscan {
         in [JAVA_HOME]/jre/lib/security/java.security. For example C:/program file/java/jdk1.8.0//jre/lib/security/java.security
         
         */
-                            
-                    
-                   
+                       
                 ArrayList<String>listOfSuccessfulCiphers  = new ArrayList<String>();
                 System.out.println("Testing CipherSuites accepted by tartget please wait...");
                      for (int j = 0; j < supportedCiphers.length; j++) {
@@ -126,14 +106,16 @@ public class Vscan {
                        }
                        }
                    
-                   //flolowing print the headers and the contain using a predefined cipher which is expected to work
+                   //fololowing print the headers and the contain using a predefined cipher which is expected to work
                     System.setProperty("https.cipherSuites", "TLS_RSA_WITH_AES_128_CBC_SHA");
-                     new Vscan().connectToUrl(targetUrl);
-            }
-    
-        }
-        
+                     //new Vscan().connectToUrl(targetUrl);
+                
     }
+        //Following print the content and the cert details.
+       
+        ConnectToUrlForContent.connectToUrl(targetUrl);
+        //we could also use the methods defined in this file.
+        //new Vscan().connectToUrl(targetUrl);
     }
     
     // start
@@ -178,7 +160,7 @@ public class Vscan {
     //end
     
     public void connectToUrl(String https_url) {
-    // this method connects to the target URL and print everithing, including HTTP Headers and content
+    // this method connects to the target URL and prints everithing, including HTTP Headers and content
         System.out.println("Target: " + https_url );
         URL url;
         
