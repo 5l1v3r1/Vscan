@@ -61,10 +61,15 @@ public class CheckWeackCiphers {
                 }            
             }
             
-            if (cipherSuite.toLowerCase().contains("cbc") && (testedProtocol.equalsIgnoreCase("TLSv1"))){
+            if (cipherSuite.toLowerCase().contains("cbc") && ((testedProtocol.equalsIgnoreCase("TLSv1")) || (testedProtocol.equalsIgnoreCase("SSLv3")))  ){
                     if(!vulnerabilityCodeList.contains("cbc-tlsv1"))
                     vulnerabilityCodeList.add("cbc-tlsv1");
+                    
                 }
+            
+            if (testedProtocol.equalsIgnoreCase("SSLv3") && (!vulnerabilityCodeList.contains("sslv3")))
+                vulnerabilityCodeList.add("sslv3");
+            
                }
         
         System.out.println("List of codes: "+ vulnerabilityCodeList);
